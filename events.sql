@@ -1,0 +1,23 @@
+CREATE TABLE events (
+	id SERIAL NOT NULL PRIMARY KEY,
+	event_date                     VARCHAR (10),
+	event_timestamp                TIMESTAMP,
+	event_name                     VARCHAR (30),
+	event_params                   JSON,
+	event_previous_timestamp       TIMESTAMP,
+	event_value_in_usd             NUMERIC (5,2),
+	event_bundle_sequence_id       INT,
+	event_server_timestamp_offset  INT,
+	user_id                        VARCHAR (32),
+	user_pseudo_id                 VARCHAR (32),
+	user_properties                JSON,
+	user_first_touch_timestamp     TIMESTAMP,
+	user_ltv                       VARCHAR (32),
+	device                         JSON,
+	geo                            JSON,
+	app_info                       JSON,
+	traffic_source                 JSON,
+	stream_id                      VARCHAR (32),
+	platform                       VARCHAR (32),
+	event_dimensions               VARCHAR (32)
+);
