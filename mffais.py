@@ -1,3 +1,4 @@
+import sys
 import json
 import psycopg2
 from datetime import datetime
@@ -14,7 +15,7 @@ cursor = conn.cursor()
 
 client = bigquery.Client()
 
-query = "SELECT * FROM `track-money-bank-balance-lite.analytics_187332759.events_20191017` LIMIT 10"
+query = "SELECT * FROM `track-money-bank-balance-lite.analytics_187332759.events_%s` LIMIT 10" % sys.argv[1]
 
 query_job = client.query(
     query,
@@ -92,8 +93,8 @@ for row in query_job:  # API request - fetches results
         cursor.execute(query)
         success += 1
     except Exception as e:
-        print(e)
         print(query)
+        print(e)
         errors += 1
     cursor.execute("COMMIT")
 
@@ -101,4 +102,4 @@ cursor.execute("COMMIT")
 cursor.close()
 conn.close()
 
-print('Script finished imported %s records (success:%i, error:%i)\n' % (success+errors, success, errors))
+print('Script %s finished imported %s records (success:%i, errors:%i)\n' % (sys.argv[1], success+errors, success, errors))
