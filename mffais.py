@@ -36,6 +36,7 @@ def convert(value, type):
         return "'%s'" % result
     if type == 'json':
         sjson = json.dumps(value)
+        sjson = sjson.replace("'", "''")
         return "'%s'" % sjson
     return "'%s'" % value
 
