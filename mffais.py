@@ -87,7 +87,12 @@ for row in query_job:  # API request - fetches results
     query += '  %s,' % platform
     query += '  %s)' % event_dimensions
 
-    cursor.execute(query)
+    try:
+        cursor.execute(query)
+    except Exception as e:
+        print(e)
+        print(query)
+        exit(1)
 
 cursor.execute("COMMIT")
 cursor.close()
