@@ -6,8 +6,8 @@ CREATE TABLE events (
 	event_params                   JSON,
 	event_previous_timestamp       BIGINT,
 	event_value_in_usd             NUMERIC (5,2),
-	event_bundle_sequence_id       INT,
-	event_server_timestamp_offset  INT,
+	event_bundle_sequence_id       BIGINT,
+	event_server_timestamp_offset  BIGINT,
 	user_id                        VARCHAR (32),
 	user_pseudo_id                 VARCHAR (32),
 	user_properties                JSON,
@@ -22,4 +22,4 @@ CREATE TABLE events (
 	event_dimensions               VARCHAR (32)
 );
 
-CREATE UNIQUE INDEX events_unique ON events (event_timestamp,user_pseudo_id);
+CREATE UNIQUE INDEX events_unique ON events (event_name, event_timestamp, user_pseudo_id);
