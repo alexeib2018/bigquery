@@ -39,6 +39,7 @@ def convert(value, type):
     return "'%s'" % value
 
 
+success = errors = 0
 for row in query_job:  # API request - fetches results
     event_date                    = convert( row['event_date'                   ], 'string' )
     event_timestamp               = convert( row['event_timestamp'              ], 'number' )
@@ -89,13 +90,15 @@ for row in query_job:  # API request - fetches results
 
     try:
         cursor.execute(query)
+        success += 1
     except Exception as e:
         print(e)
         print(query)
-        exit(1)
+        errors += 1
+    cursor.execute("COMMIT")
 
 cursor.execute("COMMIT")
 cursor.close()
 conn.close()
 
-print('Script finished OK\n')
+print('Script finished imported %s records (success:%i, error:%i)\n' % (success+errors, success, errors))
