@@ -1,8 +1,12 @@
+import os
 import sys
 import json
 import psycopg2
 from datetime import datetime
 from google.cloud import bigquery
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'mffais-test-7c795d6e409e.json'
+print (len(sys.argv))
 
 conn = psycopg2.connect(host='localhost',
                         port='5432',
@@ -15,7 +19,7 @@ cursor = conn.cursor()
 
 client = bigquery.Client()
 
-query = "SELECT * FROM `track-money-bank-balance-lite.analytics_187332759.events_20191017` LIMIT 10" % sys.argv[1]
+query = "SELECT * FROM `track-money-bank-balance-lite.analytics_187332759.events_20191017`"
 
 query_job = client.query(
     query,
@@ -31,8 +35,9 @@ def convert(value, type):
     if type == 'string':
         return "'%s'" % value
     if type == 'timestamp':
-        seconds = int(value) / 1000000
-        result = datetime.utcfromtimestamp(seconds).strftime('%Y-%m-%dT%H:%M:%S')
+        seconds = int( int(value) / 1000000 )
+        microseconds = int(value) - seconds * 1000000
+        result = datetime.utcfromtimestamp(seconds).strftime('%Y-%m-%dT%H:%M:%S') + '.%i' % microseconds
         return "'%s'" % result
     if type == 'json':
         sjson = json.dumps(value)
@@ -69,4 +74,4 @@ cursor.execute("COMMIT")
 cursor.close()
 conn.close()
 
-print('Script %s finished imported %s records (success:%i, errors:%i)\n' % (sys.argv[1], success+errors, success, errors))
+# print('Script %s finished imported %s records (success:%i, errors:%i)\n' % (sys.argv[1], success+errors, success, errors))

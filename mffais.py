@@ -15,7 +15,7 @@ cursor = conn.cursor()
 
 client = bigquery.Client()
 
-query = "SELECT * FROM `track-money-bank-balance-lite.analytics_187332759.events_%s` LIMIT 10" % sys.argv[1]
+query = "SELECT * FROM `track-money-bank-balance-lite.analytics_187332759.events_%s`" % sys.argv[1]
 
 query_job = client.query(
     query,
