@@ -1,8 +1,11 @@
+import os
 import sys
 import json
 import psycopg2
 from datetime import datetime
 from google.cloud import bigquery
+
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'mffais-test-7c795d6e409e.json'
 
 conn = psycopg2.connect(host='localhost',
                         port='5432',
