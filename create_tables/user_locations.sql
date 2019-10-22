@@ -1,6 +1,9 @@
 CREATE TABLE user_locations (
     id SERIAL NOT NULL PRIMARY KEY,
-    location            VARCHAR(32),        -- Country/Territory (User location)
+    date                DATE,
+    filename            VARCHAR(64),
+    period              VARCHAR(64),
+    location            VARCHAR(64),        -- Country/Territory (User location)
     location_type       VARCHAR(32),        -- Location type
     campaign            VARCHAR(32),        -- Campaign
     currency            VARCHAR(3),         -- Currency
