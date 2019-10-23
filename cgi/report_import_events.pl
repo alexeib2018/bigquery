@@ -1,0 +1,50 @@
+use strict;
+use warnings;
+use DBI;
+
+my $dbhost = 'localhost';
+my $dbname = 'bigquery';
+my $dbuser = 'mffais';
+my $dbpass = 'pass';
+
+my $dbport = "5432";
+my $dboptions = "-e";
+my $dbtty = "ansi";
+
+
+sub select_json {
+	my $fields = shift;
+	my $query = shift;
+
+	my $dbh = DBI->connect("dbi:Pg:dbname=$dbname;host=$dbhost;port=$dbport;options=$dboptions;tty=$dbtty","$dbuser","$dbpass",
+	        {PrintError => 0});
+
+	my $sth = $dbh->prepare($query);
+	my $rv = $sth->execute();
+	if (!defined $rv) {
+	  print "Error in request: " . $dbh->errstr . "\n";
+	  exit(0);
+	}
+
+	my @result=();
+	while (my @array = $sth->fetchrow_array()) {
+	  my @row=();
+	  for(my $i=0; $i<scalar @$fields; $i++) {
+	  	my $field = @$fields[$i];
+	  	my $value = $array[$i];
+	  	$value =~ s/"/\\"/g;
+	    push @row, '"'.$field.'":"'.$value.'"';
+	  }
+	  push @result, '{'.(join ',', @row).'}';
+	}
+
+	$sth->finish();
+	$dbh->disconnect();
+
+	'['.(join ',', @result).']'
+}
+
+
+my @fields = ['count', 'event_date'];
+my $query = 'SELECT COUNT(*) AS count, event_date FROM events GROUP BY event_date';
+print select_json(@fields, $query);
