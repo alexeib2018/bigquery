@@ -1,13 +1,16 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 use DBI;
 use Data::Dumper;
 
 
-my $dbhost = 'localhost';
-my $dbname = 'bigquery';
-my $dbuser = 'mffais';
-my $dbpass = 'pass';
+require "settings.pl";
+our $dbhost;
+our $dbname;
+our $dbuser;
+our $dbpass;
 
 my $dbport = "5432";
 my $dboptions = "-e";
@@ -28,7 +31,9 @@ sub select_json {
     }
 
     my $fields = $sth->{NAME};
-    # print Dumper($fields);
+
+    # my $types = $sth->{TYPE};
+    # print Dumper($types);
 
     my @result=();
     while (my @array = $sth->fetchrow_array()) {
@@ -49,5 +54,6 @@ sub select_json {
 }
 
 
+print "Content-type: application/json\n\n";
 my $query = 'SELECT COUNT(*) AS count, event_date FROM events GROUP BY event_date';
 print select_json($query);
