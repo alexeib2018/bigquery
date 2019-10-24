@@ -1,1 +1,100 @@
-Hello, Big-Data!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+  <title>BigQuery project</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <style type="text/css">
+    th,td {
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <table style="width:100%; margin-top: 50px;"><tr>
+      <td style="width:200px; border-right: 1px solid black; vertical-align: top;">
+        <div class="list-group" style="padding-right: 10px;">
+          <a href="#"
+             @click="tab='bigquery_import'"
+             class="list-group-item list-group-item-action"
+             style="border:none;">
+            BigQuery Import
+          </a>
+        </div>
+      </td>
+      <td>
+        <div v-if="tab=='welcome'" style="padding-left: 10px;">
+          Welcome screen
+        </div>
+        <div v-if="tab=='bigquery_import'" style="padding-left: 10px;">
+          <table class="table table-sm table-striped" style="width: 300px;">
+            <tbody>
+              <tr>
+                <th>Date</th>
+                <th>Count</th>
+              </tr>
+              <tr v-for="row in bigquery_import">
+                <td>{{ row.event_date }}</td>
+                <td>{{ row.count }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+    </tr></table>
+  </div>
+</body>
+
+<script src="/js/vue.js"></script>
+<script src="/js/axios.min.js"></script>
+<script src="/js/es6-promise.min.js"></script>
+<script src="/js/es6-promise.auto.min.js"></script>
+
+<script type="text/javascript">
+  var app = new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        tab: 'welcome',
+        password: '123456',
+        bigquery_import: '',
+      }
+    },
+    methods: {
+      report_bigquery_import: function() {
+        var self = this
+        self.bigquery_import = ''
+        var params = new FormData()
+        params.append('password', this.password)
+        axios.post('/cgi/report_bigquery_import.pl', params)
+             .then( function(data) {
+               self.bigquery_import = data.data
+             })
+      }
+    },
+    watch: {
+      tab: function(tab) {
+        if (tab == 'bigquery_import') {
+          this.report_bigquery_import()
+        }
+      }
+    }
+  })
+</script>
+</html>
