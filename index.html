@@ -42,9 +42,15 @@
              style="border:none;">
             Install Date
           </a>
+          <a href="#"
+             @click="tab='new_installs'"
+             class="list-group-item list-group-item-action"
+             style="border:none;">
+            New Installs
+          </a>
         </div>
       </td>
-      <td>
+      <td style="vertical-align: top;">
 
         <div v-if="tab=='welcome'" style="padding-left: 10px;">
           Welcome screen
@@ -82,6 +88,21 @@
           </table>
         </div>
 
+        <div v-if="tab=='new_installs'" style="padding-left: 10px;">
+          <table class="table table-sm table-striped" style="width: 300px;">
+            <tbody>
+              <tr>
+                <th>Date</th>
+                <th>Count</th>
+              </tr>
+              <tr v-for="row in new_installs">
+                <td>{{ row.date }}</td>
+                <td>{{ row.count }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
       </td>
     </tr></table>
   </div>
@@ -100,7 +121,8 @@
         tab: 'welcome',
         password: '123456',
         import_bigquery: '',
-        install_date: ''
+        install_date: '',
+        new_installs: ''
       }
     },
     methods: {
@@ -123,6 +145,16 @@
              .then( function(data) {
                self.install_date = data.data
              })
+      },
+      report_new_installs: function() {
+        var self = this
+        self.new_installs = ''
+        var params = new FormData()
+        params.append('password', this.password)
+        axios.post('/cgi/report_new_installs.pl', params)
+             .then( function(data) {
+               self.new_installs = data.data
+             })
       }
     },
     watch: {
@@ -131,6 +163,8 @@
           this.report_import_bigquery()
         } else if (tab == 'install_date') {
           this.report_install_date()
+        } else if (tab == 'new_installs') {
+          this.report_new_installs()
         }
       }
     }
