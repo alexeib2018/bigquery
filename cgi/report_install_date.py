@@ -17,7 +17,7 @@ query = '''
 	SELECT user_pseudo_id,
 	       user_first_touch_timestamp,
 	       geo->>'country' AS country
-	FROM events
+	FROM events_import_bigquery
 	GROUP BY user_pseudo_id,
 	         user_first_touch_timestamp,
 	         geo->>'country'

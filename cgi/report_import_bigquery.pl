@@ -55,5 +55,5 @@ sub select_json {
 
 
 print "Content-type: application/json\n\n";
-my $query = 'SELECT COUNT(*) AS count, event_date FROM events GROUP BY event_date';
+my $query = 'SELECT COUNT(*) AS count, event_date FROM events_import_bigquery GROUP BY event_date';
 print select_json($query);

@@ -69,7 +69,7 @@ for row in query_job:  # API request - fetches results
     platform                      = convert( row['platform'                     ], 'string' )
     event_dimensions              = convert( row['event_dimensions'             ], 'string' )
 
-    query  = 'INSERT INTO events'
+    query  = 'INSERT INTO events_import_bigquery'
     query += '  (event_date, event_timestamp, event_name, event_params, event_previous_timestamp, event_value_in_usd,'
     query += '   event_bundle_sequence_id, event_server_timestamp_offset, user_id, user_pseudo_id, user_properties,'
     query += '   user_first_touch_timestamp, user_ltv, device, geo, app_info, traffic_source, stream_id, platform, event_dimensions)'
@@ -99,7 +99,7 @@ for row in query_job:  # API request - fetches results
         cursor.execute(query)
         success += 1
     except Exception as e:
-        print(query)
+        # print(query)
         print(e)
         errors += 1
     cursor.execute("COMMIT")

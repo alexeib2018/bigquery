@@ -31,10 +31,10 @@
       <td style="width:200px; border-right: 1px solid black; vertical-align: top;">
         <div class="list-group" style="padding-right: 10px;">
           <a href="#"
-             @click="tab='bigquery_import'"
+             @click="tab='import_bigquery'"
              class="list-group-item list-group-item-action"
              style="border:none;">
-            BigQuery Import
+            Import BigQuery
           </a>
           <a href="#"
              @click="tab='install_date'"
@@ -50,14 +50,14 @@
           Welcome screen
         </div>
 
-        <div v-if="tab=='bigquery_import'" style="padding-left: 10px;">
+        <div v-if="tab=='import_bigquery'" style="padding-left: 10px;">
           <table class="table table-sm table-striped" style="width: 300px;">
             <tbody>
               <tr>
                 <th>Date</th>
                 <th>Count</th>
               </tr>
-              <tr v-for="row in bigquery_import">
+              <tr v-for="row in import_bigquery">
                 <td>{{ row.event_date }}</td>
                 <td>{{ row.count }}</td>
               </tr>
@@ -99,19 +99,19 @@
       return {
         tab: 'welcome',
         password: '123456',
-        bigquery_import: '',
+        import_bigquery: '',
         install_date: ''
       }
     },
     methods: {
-      report_bigquery_import: function() {
+      report_import_bigquery: function() {
         var self = this
-        self.bigquery_import = ''
+        self.import_bigquery = ''
         var params = new FormData()
         params.append('password', this.password)
-        axios.post('/cgi/report_bigquery_import.pl', params)
+        axios.post('/cgi/report_import_bigquery.pl')
              .then( function(data) {
-               self.bigquery_import = data.data
+               self.import_bigquery = data.data
              })
       },
       report_install_date: function() {
@@ -127,8 +127,8 @@
     },
     watch: {
       tab: function(tab) {
-        if (tab == 'bigquery_import') {
-          this.report_bigquery_import()
+        if (tab == 'import_bigquery') {
+          this.report_import_bigquery()
         } else if (tab == 'install_date') {
           this.report_install_date()
         }
