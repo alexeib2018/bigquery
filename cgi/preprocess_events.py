@@ -31,6 +31,11 @@ def timestamp2datetime(ts):
     result = datetime.utcfromtimestamp(seconds).strftime('%Y-%m-%dT%H:%M:%S') + '.%i' % microseconds
     return "'%s'" % result
 
+def quote(value):
+    if value is None:
+        return 'null'
+    return "'%s'" % value
+
 
 for row in cursor:
     id                            = row[ colnames['id'] ]
@@ -62,9 +67,9 @@ for row in cursor:
     query += "   stream_id, platform, event_dimensions) "
     query += "VALUES ("
     query += "    %s ," % id
-    query += "   '%s'," % event_date
-    query += "    %s, " % timestamp2datetime( event_timestamp )
-    query += "   '%s'," % event_name
+    query += "    %s ," % quote( event_date )
+    query += "    %s ," % timestamp2datetime( event_timestamp )
+    query += "    %s ," % quote( event_name )
     query += "   '%s'," % event_params
     query += "    %s, " % event_previous_timestamp
     query += "    %s, " % event_value_in_usd
@@ -87,6 +92,8 @@ for row in cursor:
 
     if (id % 1000 == 0):
         print('Processed %s records' % id)
+
+print('Processed %s records' % id)
 
 insert.execute('COMMIT')
 insert.close()
