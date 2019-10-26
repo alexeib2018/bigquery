@@ -67,6 +67,7 @@ my $query = "
 ";
 
 print "Content-type: text/csv\n";
+print 'Content-Disposition: attachment; filename="new_installs.csv"'."\n";
 print "\n";
 print "# Title: New Installs\n";
 print "# StartDate: 2019-10-11\n";

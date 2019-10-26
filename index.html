@@ -96,6 +96,10 @@
 
         <div v-if="tab=='report_csv'" style="padding-left: 10px;">
           <h4 style="text-align: left">{{ csv_params.Title }}</h4>
+          <div style="text-align: left">
+            <a :href="'/cgi/' + csv_filename"
+               target="_blank">Download .CSV</a>
+          </div>
           <table class="table table-sm table-striped" :style="csv_style">
             <tbody>
               <tr>
@@ -131,10 +135,11 @@
         password: '123456',
         import_bigquery: '',
         install_date: '',
-        csv_params: {},
-        csv_header: [],
-        csv_data:   [],
-        csv_style:  'width: 300px;'
+        csv_params:   {},
+        csv_header:   [],
+        csv_data:     [],
+        csv_style:    'width: 300px;',
+        csv_filename: ''
       }
     },
     methods: {
@@ -255,6 +260,7 @@
       },
       report_csv: function(filename) {
         this.tab = 'report_csv'
+        this.csv_filename = filename
         var self = this
         csv_params = {}
         csv_header = []

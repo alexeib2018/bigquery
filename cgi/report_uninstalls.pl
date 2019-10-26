@@ -63,6 +63,7 @@ my $query = "
 ";
 
 print "Content-type: text/csv\n";
+print 'Content-Disposition: attachment; filename="uninstalls.csv"'."\n";
 print "\n";
 print "# Title: Uninstalls\n";
 print "Date,Count\n";
