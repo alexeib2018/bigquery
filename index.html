@@ -48,6 +48,12 @@
              style="border:none;">
             New Installs
           </a>
+          <a href="javascript:void(0)"
+             @click="report_csv('report_uninstalls.pl')"
+             class="list-group-item list-group-item-action"
+             style="border:none;">
+            Uninstalls
+          </a>
         </div>
       </td>
       <td style="vertical-align: top;">
@@ -172,7 +178,7 @@
             } else {
               var line_arr = []
 
-              var infinite_line = line + 'A'
+              var infinite_line = line + 'AB'
               while(line && line.length < infinite_line.length) {
                 infinite_line = line
                 line=line.trim()
