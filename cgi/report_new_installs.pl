@@ -17,7 +17,7 @@ my $dboptions = "-e";
 my $dbtty = "ansi";
 
 
-sub select_json {
+sub select_csv {
     my $query = shift;
 
     my $dbh = DBI->connect("dbi:Pg:dbname=$dbname;host=$dbhost;port=$dbport;options=$dboptions;tty=$dbtty","$dbuser","$dbpass",
@@ -42,19 +42,17 @@ sub select_json {
         my $field = @$fields[$i];
         my $value = $array[$i];
         $value =~ s/"/\\"/g;
-        push @row, '"'.$field.'":"'.$value.'"';
+        push @row, '"'.$value.'"';
       }
-      push @result, '{'.(join ',', @row).'}';
+      push @result, join ',', @row;
     }
 
     $sth->finish();
     $dbh->disconnect();
 
-    '['.(join ',', @result).']'
+    (join "\n", @result) . "\n"
 }
 
-
-print "Content-type: application/json\n\n";
 
 my $query = "
   SELECT date,
@@ -62,10 +60,16 @@ my $query = "
   FROM (SELECT DATE(user_first_touch_timestamp) AS date,
                user_pseudo_id
         FROM events
-        WHERE user_first_touch_timestamp>'2019-10-11'
+        WHERE user_first_touch_timestamp>='2019-10-11'
         GROUP BY user_first_touch_timestamp, user_pseudo_id) AS installs
   GROUP BY date
   ORDER BY date;
 ";
 
-print select_json($query);
+print "Content-type: text/csv\n";
+print "\n";
+print "# Title: New Installs\n";
+print "# StartDate: 2019-10-11\n";
+print "# EndDate: 2019-10-26\n";
+print "Date,Count\n";
+print select_csv($query);

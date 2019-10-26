@@ -30,20 +30,20 @@
     <table style="width:100%; margin-top: 50px;"><tr>
       <td style="width:200px; border-right: 1px solid black; vertical-align: top;">
         <div class="list-group" style="padding-right: 10px;">
-          <a href="#"
-             @click="tab='import_bigquery'"
+          <a href="javascript:void(0)"
+             @click="report_import_bigquery()"
              class="list-group-item list-group-item-action"
              style="border:none;">
             Import BigQuery
           </a>
-          <a href="#"
-             @click="tab='install_date'"
+          <a href="javascript:void(0)"
+             @click="report_install_date()"
              class="list-group-item list-group-item-action"
              style="border:none;">
             Install Date
           </a>
-          <a href="#"
-             @click="tab='new_installs'"
+          <a href="javascript:void(0)"
+             @click="report_csv('report_new_installs.pl')"
              class="list-group-item list-group-item-action"
              style="border:none;">
             New Installs
@@ -88,16 +88,19 @@
           </table>
         </div>
 
-        <div v-if="tab=='new_installs'" style="padding-left: 10px;">
-          <table class="table table-sm table-striped" style="width: 300px;">
+        <div v-if="tab=='report_csv'" style="padding-left: 10px;">
+          <h4 style="text-align: left">{{ csv_params.Title }}</h4>
+          <table class="table table-sm table-striped" :style="csv_style">
             <tbody>
               <tr>
-                <th>Date</th>
-                <th>Count</th>
+                <th v-for="column_name in csv_header">
+                  {{ column_name }}
+                </th>
               </tr>
-              <tr v-for="row in new_installs">
-                <td>{{ row.date }}</td>
-                <td>{{ row.count }}</td>
+              <tr v-for="row in csv_data">
+                <td v-for="column_value in row">
+                  {{ column_value }}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -122,11 +125,15 @@
         password: '123456',
         import_bigquery: '',
         install_date: '',
-        new_installs: ''
+        csv_params: {},
+        csv_header: [],
+        csv_data:   [],
+        csv_style:  'width: 300px;'
       }
     },
     methods: {
       report_import_bigquery: function() {
+        this.tab = 'import_bigquery'
         var self = this
         self.import_bigquery = ''
         var params = new FormData()
@@ -137,6 +144,7 @@
              })
       },
       report_install_date: function() {
+        this.tab = 'install_date'
         var self = this
         self.install_date = ''
         var params = new FormData()
@@ -146,26 +154,114 @@
                self.install_date = data.data
              })
       },
-      report_new_installs: function() {
+      read_csv: function(csv) {
+        var params = {}
+        var header = []
+        var data   = []
+
+        for(var line of csv.split('\n')) {
+          line = line.trim()
+          if (line) {
+            if (line[0] === '#') {
+              var index = line.indexOf(':')
+              if (index > 0) {
+                var key = line.substring(1,index).trim()
+                var value = line.substring(index+1).trim()
+                params[key] = value
+              }
+            } else {
+              var line_arr = []
+
+              var infinite_line = line + 'A'
+              while(line && line.length < infinite_line.length) {
+                infinite_line = line
+                line=line.trim()
+
+                if (line[0] === '"') {
+                  line = line.substring(1)
+                  var index = line.indexOf('"')
+                  if (index > 0) {
+                    var value = line.substring(0, index)
+                    line = line.substring(index+1)
+                    var index_comma = line.indexOf(',')
+                    if (index_comma >= 0) {
+                      line = line.substring(index_comma+1)
+                    } else {
+                      line = ''
+                    }
+                    line_arr.push( value )
+
+                  } else {
+                    line = line.rtrim()
+                    line_arr.push(line)
+                    line = ''
+                  }
+
+                } else {
+                  var index_comma = line.indexOf(',')
+                  if (index_comma >= 0) {
+                    var value = line.substring(0, index_comma)
+                    line_arr.push(value)
+                    line = line.substring(index_comma+1)
+                  } else {
+                    line_arr.push(line)
+                    line = ''
+                  }
+                }
+              }
+
+              if (header.length == 0) {
+                header = line_arr
+              } else {
+                data.push( line_arr )
+              }
+            }
+          }
+        }
+
+        return { params: params,
+                 header: header,
+                 data: data }
+      },
+      read_csv_test: function(foo) {
+        console.log( this.read_csv('').header )
+        console.log( '>[]' )
+
+        console.log( this.read_csv('one').header )
+        console.log( '>["one"]' )
+        console.log( this.read_csv('one,two').header )
+        console.log( '>(2) ["one", "two"]' )
+        console.log( this.read_csv('one,two,three').header )
+        console.log( '>(3) ["one", "two", "three"]' )
+        console.log( this.read_csv(' one,two , three ,four ').header )
+        console.log( '>(4) ["one", "two ", "three ", "four"]' )
+
+        console.log( this.read_csv('"one"').header )
+        console.log( '>["one"]' )
+        console.log( this.read_csv('"one","two"').header )
+        console.log( '>(2) ["one", "two"]' )
+        console.log( this.read_csv('"one",two,"three"').header )
+        console.log( '>(3) ["one", "two", "three"]' )
+        console.log( this.read_csv('" one","two "," three ","four "').header )
+        console.log( '>(4) ["_one", "two_", "_three_", "four_"]' )
+        console.log( this.read_csv('"one","two,three","four"').header )
+        console.log( '>(3) ["one", "two,three", "four"]' )
+      },
+      report_csv: function(filename) {
+        this.tab = 'report_csv'
         var self = this
-        self.new_installs = ''
+        csv_params = {}
+        csv_header = []
+        csv_data   = []
         var params = new FormData()
         params.append('password', this.password)
-        axios.post('/cgi/report_new_installs.pl', params)
+        axios.post('/cgi/' + filename, params)
              .then( function(data) {
-               self.new_installs = data.data
+               var csv = self.read_csv(data.data)
+               self.csv_params = csv.params
+               self.csv_header = csv.header
+               self.csv_data = csv.data
              })
-      }
-    },
-    watch: {
-      tab: function(tab) {
-        if (tab == 'import_bigquery') {
-          this.report_import_bigquery()
-        } else if (tab == 'install_date') {
-          this.report_install_date()
-        } else if (tab == 'new_installs') {
-          this.report_new_installs()
-        }
       }
     }
   })
