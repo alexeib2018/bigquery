@@ -86,7 +86,7 @@ print "Content-type: text/csv\n";
 print 'Content-Disposition: attachment; filename="campaigns.csv"'."\n";
 print "\n";
 print "# Title: Campaigns\n";
-print "Campaign, Installs, Uninstalls, Net installs\n";
+print "Campaign, Install, Uninstall, Net new install\n";
 print select_csv($query);
 
 $dbh->disconnect();
