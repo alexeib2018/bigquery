@@ -43,16 +43,22 @@
             Install Date
           </a>
           <a href="javascript:void(0)"
-             @click="report_csv('report_new_installs.pl')"
+             @click="report_csv('report_new_installs.pl', 'width: 300px;')"
              class="list-group-item list-group-item-action"
              style="border:none;">
             New Installs
           </a>
           <a href="javascript:void(0)"
-             @click="report_csv('report_uninstalls.pl')"
+             @click="report_csv('report_uninstalls.pl', 'width: 300px;')"
              class="list-group-item list-group-item-action"
              style="border:none;">
             Uninstalls
+          </a>
+          <a href="javascript:void(0)"
+             @click="report_csv('report_campaigns.pl', 'width: 600px;')"
+             class="list-group-item list-group-item-action"
+             style="border:none;">
+            Campaigns
           </a>
         </div>
       </td>
@@ -138,7 +144,7 @@
         csv_params:   {},
         csv_header:   [],
         csv_data:     [],
-        csv_style:    'width: 300px;',
+        csv_style:    '',
         csv_filename: ''
       }
     },
@@ -258,9 +264,10 @@
         console.log( this.read_csv('"one","two,three","four"').header )
         console.log( '>(3) ["one", "two,three", "four"]' )
       },
-      report_csv: function(filename) {
+      report_csv: function(filename, style='') {
         this.tab = 'report_csv'
         this.csv_filename = filename
+        this.csv_style = style
         var self = this
         csv_params = {}
         csv_header = []
