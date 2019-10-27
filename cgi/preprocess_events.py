@@ -1,5 +1,6 @@
 #!../.venv3/bin/python
 
+import json
 import psycopg2
 from datetime import datetime
 
@@ -31,10 +32,20 @@ def timestamp2datetime(ts):
     result = datetime.utcfromtimestamp(seconds).strftime('%Y-%m-%dT%H:%M:%S') + '.%i' % microseconds
     return "'%s'" % result
 
+def copy(value):
+    if value is None:
+        return 'null'
+    return value
+
 def quote(value):
     if value is None:
         return 'null'
     return "'%s'" % value
+
+def copyJSON(value):
+    sjson = json.dumps(value)
+    sjson = sjson.replace("'", "''")
+    return "'%s'" % sjson
 
 
 for row in cursor:
@@ -55,7 +66,7 @@ for row in cursor:
     device                        = 'null' # row[ colnames['device'] ]
     geo                           = 'null' # row[ colnames['geo'] ]
     app_info                      = 'null' # row[ colnames['app_info'] ]
-    traffic_source                = 'null' # row[ colnames['traffic_source'] ]
+    traffic_source                = row[ colnames['traffic_source'] ]
     stream_id                     = 'null' # row[ colnames['stream_id'] ]
     platform                      = 'null' # row[ colnames['platform'] ]
     event_dimensions              = 'null' # row[ colnames['event_dimensions'] ]
@@ -66,27 +77,27 @@ for row in cursor:
     query += "   user_properties, user_first_touch_timestamp, user_ltv, device, geo, app_info, traffic_source,"
     query += "   stream_id, platform, event_dimensions) "
     query += "VALUES ("
-    query += "    %s ," % id
-    query += "    %s ," % quote( event_date )
-    query += "    %s ," % timestamp2datetime( event_timestamp )
-    query += "    %s ," % quote( event_name )
-    query += "   '%s'," % event_params
-    query += "    %s, " % event_previous_timestamp
-    query += "    %s, " % event_value_in_usd
-    query += "    %s, " % event_bundle_sequence_id
-    query += "    %s, " % event_server_timestamp_offset
-    query += "    %s, " % user_id
-    query += "   '%s'," % user_pseudo_id
-    query += "    %s, " % user_properties
-    query += "    %s, " % timestamp2datetime( user_first_touch_timestamp )
-    query += "    %s, " % user_ltv
-    query += "    %s, " % device
-    query += "    %s, " % geo
-    query += "    %s, " % app_info
-    query += "    %s, " % traffic_source
-    query += "    %s, " % stream_id
-    query += "    %s, " % platform
-    query += "    %s) " % event_dimensions
+    query += "   %s," % copy( id )
+    query += "   %s," % quote( event_date )
+    query += "   %s," % timestamp2datetime( event_timestamp )
+    query += "   %s," % quote( event_name )
+    query += "   %s," % event_params
+    query += "   %s," % event_previous_timestamp
+    query += "   %s," % event_value_in_usd
+    query += "   %s," % event_bundle_sequence_id
+    query += "   %s," % event_server_timestamp_offset
+    query += "   %s," % user_id
+    query += "   %s," % quote( user_pseudo_id )
+    query += "   %s," % user_properties
+    query += "   %s," % timestamp2datetime( user_first_touch_timestamp )
+    query += "   %s," % user_ltv
+    query += "   %s," % device
+    query += "   %s," % geo
+    query += "   %s," % app_info
+    query += "   %s," % copyJSON( traffic_source )
+    query += "   %s," % stream_id
+    query += "   %s," % platform
+    query += "   %s)" % event_dimensions
 
     insert.execute(query)
 
