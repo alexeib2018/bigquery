@@ -19,7 +19,6 @@ CREATE TABLE events_import_bigquery (
 	traffic_source                 JSON,
 	stream_id                      VARCHAR (32),
 	platform                       VARCHAR (32),
-	event_dimensions               VARCHAR (32)
+	event_dimensions               VARCHAR (32),
+	UNIQUE(event_name, event_timestamp, user_pseudo_id)
 );
-
-CREATE UNIQUE INDEX events_import_bigquery_unique ON events_import_bigquery (event_name, event_timestamp, user_pseudo_id);

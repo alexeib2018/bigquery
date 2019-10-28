@@ -46,7 +46,8 @@ def convert(value, type):
     return "'%s'" % value
 
 
-success = errors = 0
+recno = 0
+success = duplicates = errors = 0
 for row in query_job:  # API request - fetches results
     event_date                    = convert( row['event_date'                   ], 'string' )
     event_timestamp               = convert( row['event_timestamp'              ], 'number' )
@@ -69,31 +70,45 @@ for row in query_job:  # API request - fetches results
     platform                      = convert( row['platform'                     ], 'string' )
     event_dimensions              = convert( row['event_dimensions'             ], 'string' )
 
+    query_duplicates  = 'SELECT FROM events_import_bigquery'
+    query_duplicates += ' WHERE'
+    query_duplicates += "   event_name=%s AND" % event_name
+    query_duplicates += "   event_timestamp=%s AND" % event_timestamp
+    query_duplicates += "   user_pseudo_id=%s" % user_pseudo_id
+    cursor_duplicates = conn.cursor()
+    cursor_duplicates.execute(query_duplicates)
+    record_duplicates = cursor_duplicates.rowcount
+    cursor_duplicates.close()
+    if (record_duplicates):
+        duplicates += 1
+        continue
+
     query  = 'INSERT INTO events_import_bigquery'
     query += '  (event_date, event_timestamp, event_name, event_params, event_previous_timestamp, event_value_in_usd,'
     query += '   event_bundle_sequence_id, event_server_timestamp_offset, user_id, user_pseudo_id, user_properties,'
     query += '   user_first_touch_timestamp, user_ltv, device, geo, app_info, traffic_source, stream_id, platform, event_dimensions)'
-    query += 'VALUES ('
-    query += '  %s,' % event_date
-    query += '  %s,' % event_timestamp
-    query += '  %s,' % event_name
-    query += '  %s,' % event_params
-    query += '  %s,' % event_previous_timestamp
-    query += '  %s,' % event_value_in_usd
-    query += '  %s,' % event_bundle_sequence_id
-    query += '  %s,' % event_server_timestamp_offset
-    query += '  %s,' % user_id
-    query += '  %s,' % user_pseudo_id
-    query += '  %s,' % user_properties
-    query += '  %s,' % user_first_touch_timestamp
-    query += '  %s,' % user_ltv
-    query += '  %s,' % device
-    query += '  %s,' % geo
-    query += '  %s,' % app_info
-    query += '  %s,' % traffic_source
-    query += '  %s,' % stream_id
-    query += '  %s,' % platform
-    query += '  %s)' % event_dimensions
+    query += ' VALUES ('
+    query += '   %s,' % event_date
+    query += '   %s,' % event_timestamp
+    query += '   %s,' % event_name
+    query += '   %s,' % event_params
+    query += '   %s,' % event_previous_timestamp
+    query += '   %s,' % event_value_in_usd
+    query += '   %s,' % event_bundle_sequence_id
+    query += '   %s,' % event_server_timestamp_offset
+    query += '   %s,' % user_id
+    query += '   %s,' % user_pseudo_id
+    query += '   %s,' % user_properties
+    query += '   %s,' % user_first_touch_timestamp
+    query += '   %s,' % user_ltv
+    query += '   %s,' % device
+    query += '   %s,' % geo
+    query += '   %s,' % app_info
+    query += '   %s,' % traffic_source
+    query += '   %s,' % stream_id
+    query += '   %s,' % platform
+    query += '   %s)' % event_dimensions
+    # query += ' ON CONFLICT DO NOTHING'
 
     try:
         cursor.execute(query)
@@ -102,10 +117,17 @@ for row in query_job:  # API request - fetches results
         # print(query)
         print(e)
         errors += 1
-    cursor.execute("COMMIT")
+    # cursor.execute("COMMIT")
+
+    recno += 1
+    if (recno % 1000 == 0):
+        print('Imported %s records' % recno)
+
+print('Importted %s records' % recno)
+
 
 cursor.execute("COMMIT")
 cursor.close()
 conn.close()
 
-print('Script %s finished imported %s records (success:%i, errors:%i)\n' % (sys.argv[1], success+errors, success, errors))
+print('Script %s finished imported %s records (success:%i, duplicates:%i, errors:%i)\n' % (sys.argv[1], success+duplicates+errors, success, duplicates, errors))
