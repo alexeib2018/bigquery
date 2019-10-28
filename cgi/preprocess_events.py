@@ -54,7 +54,7 @@ for row in cursor:
     event_timestamp               = row[ colnames['event_timestamp'] ]
     event_name                    = row[ colnames['event_name'] ]
     event_params                  = 'null' # row[ colnames['event_params'] ]
-    event_previous_timestamp      = 'null' # row[ colnames['event_previous_timestamp'] ]
+    event_previous_timestamp      = row[ colnames['event_previous_timestamp'] ]
     event_value_in_usd            = 'null' # row[ colnames['event_value_in_usd'] ]
     event_bundle_sequence_id      = 'null' # row[ colnames['event_bundle_sequence_id'] ]
     event_server_timestamp_offset = 'null' # row[ colnames['event_server_timestamp_offset'] ]
@@ -82,7 +82,7 @@ for row in cursor:
     query += "   %s," % timestamp2datetime( event_timestamp )
     query += "   %s," % quote( event_name )
     query += "   %s," % event_params
-    query += "   %s," % event_previous_timestamp
+    query += "   %s," % timestamp2datetime( event_previous_timestamp )
     query += "   %s," % event_value_in_usd
     query += "   %s," % event_bundle_sequence_id
     query += "   %s," % event_server_timestamp_offset

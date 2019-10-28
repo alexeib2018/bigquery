@@ -1,11 +1,11 @@
 CREATE TABLE events (
 	id                             SERIAL NOT NULL PRIMARY KEY,
-	events_import_bigquery_fk	   INT,
+	events_import_bigquery_fk	   INT UNIQUE,
 	event_date                     DATE,
 	event_timestamp                TIMESTAMP,
 	event_name                     VARCHAR (32),
 	event_params                   JSON,
-	event_previous_timestamp       BIGINT,
+	event_previous_timestamp       TIMESTAMP,
 	event_value_in_usd             NUMERIC (5,2),
 	event_bundle_sequence_id       BIGINT,
 	event_server_timestamp_offset  BIGINT,
@@ -22,5 +22,3 @@ CREATE TABLE events (
 	platform                       VARCHAR (32),
 	event_dimensions               VARCHAR (32)
 );
-
-CREATE UNIQUE INDEX events_unique ON events (event_name, event_timestamp, user_pseudo_id);
