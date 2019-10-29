@@ -107,12 +107,88 @@ def parse_user_properties(arr):
     return "'%s'" % sjson
 
 
+def parse_event_params(arr):
+    result = {}
+
+    for row in arr:
+        key = row['key']
+        value = row['value']
+        if   key == 'firebase_screen_class':
+            result[ 'firebase_screen_class'     ] = value['string_value']
+        elif key == 'firebase_event_origin':
+            result[ 'firebase_event_origin'     ] = value['string_value']
+        elif key == 'firebase_screen_id':
+            result[ 'firebase_screen_id'        ] = value['int_value']
+        elif key == 'firebase_screen':
+            result[ 'firebase_screen'           ] = value['string_value']
+        elif key == 'firebase_previous_screen':
+            result[ 'firebase_previous_screen'  ] = value['string_value']
+        elif key == 'firebase_previous_class':
+            result[ 'firebase_previous_class'   ] = value['string_value']
+        elif key == 'firebase_previous_id':
+            result[ 'firebase_previous_id'      ] = value['int_value']
+        elif key == 'engagement_time_msec':
+            result[ 'engagement_time_msec'      ] = value['int_value']
+        elif key == 'system_app_update':
+            result[ 'system_app_update'         ] = value['int_value']
+        elif key == 'update_with_analytics':
+            result[ 'update_with_analytics'     ] = value['int_value']
+        elif key == 'previous_first_open_count':
+            result[ 'previous_first_open_count' ] = value['int_value']
+        elif key == 'firebase_conversion':
+            result[ 'firebase_conversion'       ] = value['int_value']
+        elif key == 'system_app':
+            result[ 'system_app'                ] = value['int_value']
+        elif key == 'selected_option':
+            result[ 'selected_option'           ] = value['string_value']
+        elif key == 'click_timestamp':
+            result[ 'click_timestamp'           ] = value['int_value']
+        elif key == 'campaign_info_source':
+            result[ 'campaign_info_source'      ] = value['string_value']
+        elif key == 'gclid':
+            result[ 'gclid'                     ] = value['string_value']
+        elif key == 'value':
+            result[ 'value'                     ] = value['int_value']
+        elif key == 'medium':
+            result[ 'medium'                    ] = value['string_value']
+        elif key == 'source':
+            result[ 'source'                    ] = value['string_value']
+        elif key == 'ga_session_number':
+            result[ 'ga_session_number'         ] = value['int_value']
+        elif key == 'session_engaged':
+            result[ 'session_engaged'           ] = value['int_value']
+        elif key == 'ga_session_id':
+            result[ 'ga_session_id'             ] = value['int_value']
+        elif key == 'engaged_session_event':
+            result[ 'engaged_session_event'     ] = value['int_value']
+        elif key == 'entrances':
+            result[ 'entrances'                 ] = value['int_value']
+        elif key == 'cushion_used':
+            result[ 'cushion_used'              ] = value['string_value']
+        elif key == 'recurring':
+            result[ 'recurring'                 ] = value['int_value']
+        elif key == 'previous_app_version':
+            result[ 'previous_app_version'      ] = value['string_value']
+        elif key == 'previous_os_version':
+            result[ 'previous_os_version'       ] = value['string_value']
+        elif key == 'fatal':
+            result[ 'fatal'                     ] = value['int_value']
+        elif key == 'timestamp':
+            result[ 'timestamp'                 ] = value['int_value']
+        else:
+            print('Unknown event params key (%s)' % key)
+
+    sjson = json.dumps(result)
+    sjson = sjson.replace("'", "''")
+    return "'%s'" % sjson
+
+
 for row in cursor:
     id                            = copy( row[ colnames['id'] ] )
     event_date                    = quote( row[ colnames['event_date'] ] )
     event_timestamp               = timestamp2datetime( row[ colnames['event_timestamp'] ] )
     event_name                    = quote( row[ colnames['event_name'] ] )
-    event_params                  = 'null' # row[ colnames['event_params'] ]
+    event_params                  = parse_event_params( row[ colnames['event_params'] ] )
     event_previous_timestamp      = timestamp2datetime( row[ colnames['event_previous_timestamp'] ] )
     event_value_in_usd            = 'null' # row[ colnames['event_value_in_usd'] ]
     event_bundle_sequence_id      = 'null' # row[ colnames['event_bundle_sequence_id'] ]
