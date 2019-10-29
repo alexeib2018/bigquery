@@ -203,7 +203,7 @@
                 if (line[0] === '"') {
                   line = line.substring(1)
                   var index = line.indexOf('"')
-                  if (index > 0) {
+                  if (index >= 0) {
                     var value = line.substring(0, index)
                     line = line.substring(index+1)
                     var index_comma = line.indexOf(',')
@@ -215,7 +215,7 @@
                     line_arr.push( value )
 
                   } else {
-                    line = line.rtrim()
+                    line = line.trim()
                     line_arr.push(line)
                     line = ''
                   }
