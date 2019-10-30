@@ -75,6 +75,7 @@ JOIN (
   SELECT user_pseudo_id AS user_pseudo_idc,
          traffic_source ->> 'name' AS campaign
   FROM events
+  WHERE traffic_source ->> 'name' <> '(direct)'
   GROUP BY user_pseudo_idc, campaign
 ) AS user_campaign
 ON days_used.user_pseudo_id = user_campaign.user_pseudo_idc
@@ -95,7 +96,7 @@ LEFT JOIN (
   ORDER BY event_date
 ) AS uninstalls
 ON days_used.user_pseudo_id = uninstalls.user_pseudo_idu
-ORDER BY days_used DESC
+ORDER BY campaign, days_used DESC
 
 ";
 
