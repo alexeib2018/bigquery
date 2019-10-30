@@ -55,12 +55,6 @@
             Uninstalls
           </a>
           <a href="javascript:void(0)"
-             @click="report_csv('report_campaigns.pl', 'width: 600px;')"
-             class="list-group-item list-group-item-action"
-             style="border:none;">
-            Campaigns
-          </a>
-          <a href="javascript:void(0)"
              @click="report_csv('report_active_users.pl', 'width: 300px;')"
              class="list-group-item list-group-item-action"
              style="border:none;">
@@ -71,6 +65,12 @@
              class="list-group-item list-group-item-action"
              style="border:none;">
             Days used
+          </a>
+          <a href="javascript:void(0)"
+             @click="report_csv('report_campaigns.py', 'width: 100%;')"
+             class="list-group-item list-group-item-action"
+             style="border:none;">
+            Campaigns
           </a>
         </div>
       </td>

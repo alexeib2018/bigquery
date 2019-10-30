@@ -1,5 +1,6 @@
 .venv3
 .idea
+.ipynb_checkpoints
 *.json
 *.txt
 dev/
