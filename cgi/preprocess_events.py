@@ -61,6 +61,8 @@ def quote(value):
 
 
 def copy_json(value):
+    if value is None:
+        return 'null'
     sjson = json.dumps(value)
     sjson = sjson.replace("'", "''")
     return "'%s'" % sjson
