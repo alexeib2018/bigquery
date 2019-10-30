@@ -280,10 +280,10 @@
         this.tab = 'report_csv'
         this.csv_filename = filename
         this.csv_style = style
+        this.csv_params = {}
+        this.csv_header = []
+        this.csv_data   = []
         var self = this
-        csv_params = {}
-        csv_header = []
-        csv_data   = []
         var params = new FormData()
         params.append('password', this.password)
         axios.post('/cgi/' + filename, params)
