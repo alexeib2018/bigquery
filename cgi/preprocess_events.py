@@ -186,27 +186,27 @@ def parse_event_params(arr):
 
 
 for row in cursor:
-    id                            = copy( row[ colnames['id'] ] )
-    event_date                    = quote( row[ colnames['event_date'] ] )
-    event_timestamp               = timestamp2datetime( row[ colnames['event_timestamp'] ] )
-    event_name                    = quote( row[ colnames['event_name'] ] )
-    event_params                  = parse_event_params( row[ colnames['event_params'] ] )
-    event_previous_timestamp      = timestamp2datetime( row[ colnames['event_previous_timestamp'] ] )
-    event_value_in_usd            = 'null' # row[ colnames['event_value_in_usd'] ]
-    event_bundle_sequence_id      = 'null' # row[ colnames['event_bundle_sequence_id'] ]
-    event_server_timestamp_offset = 'null' # row[ colnames['event_server_timestamp_offset'] ]
-    user_id                       = 'null' # row[ colnames['user_id'] ]
-    user_pseudo_id                = quote( row[ colnames['user_pseudo_id'] ] )
-    user_properties               = parse_user_properties( row[ colnames['user_properties'] ] )
-    user_first_touch_timestamp    = timestamp2datetime( row[ colnames['user_first_touch_timestamp'] ] )
-    user_ltv                      = 'null' # row[ colnames['user_ltv'] ]
-    device                        = 'null' # row[ colnames['device'] ]
-    geo                           = 'null' # row[ colnames['geo'] ]
-    app_info                      = 'null' # row[ colnames['app_info'] ]
-    traffic_source                = copy_json( row[ colnames['traffic_source'] ] )
-    stream_id                     = 'null' # row[ colnames['stream_id'] ]
-    platform                      = 'null' # row[ colnames['platform'] ]
-    event_dimensions              = 'null' # row[ colnames['event_dimensions'] ]
+    id                            = copy(                  row[ colnames['id']                            ])
+    event_date                    = quote(                 row[ colnames['event_date']                    ])
+    event_timestamp               = timestamp2datetime(    row[ colnames['event_timestamp']               ])
+    event_name                    = quote(                 row[ colnames['event_name']                    ])
+    event_params                  = parse_event_params(    row[ colnames['event_params']                  ])
+    event_previous_timestamp      = timestamp2datetime(    row[ colnames['event_previous_timestamp']      ])
+    event_value_in_usd            = copy(                  row[ colnames['event_value_in_usd']            ])
+    event_bundle_sequence_id      = copy(                  row[ colnames['event_bundle_sequence_id']      ])
+    event_server_timestamp_offset = copy(                  row[ colnames['event_server_timestamp_offset'] ])
+    user_id                       = quote(                 row[ colnames['user_id']                       ])
+    user_pseudo_id                = quote(                 row[ colnames['user_pseudo_id']                ])
+    user_properties               = parse_user_properties( row[ colnames['user_properties']               ])
+    user_first_touch_timestamp    = timestamp2datetime(    row[ colnames['user_first_touch_timestamp']    ])
+    user_ltv                      = quote(                 row[ colnames['user_ltv']                      ])
+    device                        = copy_json(             row[ colnames['device']                        ])
+    geo                           = copy_json(             row[ colnames['geo']                           ])
+    app_info                      = copy_json(             row[ colnames['app_info']                      ])
+    traffic_source                = copy_json(             row[ colnames['traffic_source']                ])
+    stream_id                     = quote(                 row[ colnames['stream_id']                     ])
+    platform                      = quote(                 row[ colnames['platform']                      ])
+    event_dimensions              = quote(                 row[ colnames['event_dimensions']              ])
 
     query  = "INSERT INTO events"
     query += "  (events_import_bigquery_fk, event_date, event_timestamp, event_name, event_params, event_previous_timestamp,"
@@ -238,10 +238,10 @@ for row in cursor:
 
     insert.execute(query)
 
-    if (id % 1000 == 0):
-        print('Processed %s records' % id)
+    if id % 1000 == 0:
+        print('Preprocessed %s records' % id)
 
-print('Processed %s records' % id)
+print('Preprocessed %s records' % id)
 
 insert.execute('COMMIT')
 insert.close()
