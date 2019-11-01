@@ -29,7 +29,7 @@
   <div class="container" id="app">
     <table style="width:100%; margin-top: 50px;"><tr>
       <td style="width:200px; border-right: 1px solid black; vertical-align: top;">
-        <div class="list-group" style="padding-right: 10px;">
+        <div class="list-group" style="width:200px; padding-right: 10px;">
           <a href="javascript:void(0)"
              @click="report_import_bigquery()"
              class="list-group-item list-group-item-action"
@@ -78,6 +78,12 @@
              style="border:none;">
             Countries
           </a>
+          <a href="javascript:void(0)"
+             @click="report_csv('report_list_of_users.py', 'width: 1400px;')"
+             class="list-group-item list-group-item-action"
+             style="border:none;">
+            List of users
+          </a>
         </div>
       </td>
       <td style="vertical-align: top;">
@@ -124,7 +130,7 @@
             <a :href="'/cgi/' + csv_filename"
                target="_blank">Download .CSV</a>
           </div>
-          <table class="table table-sm table-striped" :style="csv_style">
+          <table class="table table-sm table-striped" :style="csv_style" style="margin-right: 30px">
             <tbody>
               <tr>
                 <th v-for="column_name in csv_header">
