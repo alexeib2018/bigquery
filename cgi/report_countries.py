@@ -1,7 +1,7 @@
 #!../.venv3/bin/python
 # coding: utf-8
 
-# # Campaigns report
+# # Countries report
 
 # ### Imports
 
@@ -154,7 +154,8 @@ print('# Title: Countries report')
 # In[9]:
 
 
-result.to_csv(sys.stdout, index=False)
+str = result.to_csv(index=False)
+print(str.encode('ascii','xmlcharrefreplace').decode('utf-8'))
 
 
 # ### Release resources

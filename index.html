@@ -73,7 +73,7 @@
             Campaigns
           </a>
           <a href="javascript:void(0)"
-             @click="report_csv('report_countries.py', 'width: 100%;')"
+             @click="report_csv('report_countries.py', 'width: 600px;')"
              class="list-group-item list-group-item-action"
              style="border:none;">
             Countries
@@ -132,9 +132,8 @@
                 </th>
               </tr>
               <tr v-for="row in csv_data">
-                <td v-for="column_value in row">
-                  {{ column_value }}
-                </td>
+                <td v-for="column_value in row"
+                    v-html="column_value"></td>
               </tr>
             </tbody>
           </table>
